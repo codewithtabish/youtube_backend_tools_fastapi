@@ -29,7 +29,7 @@ def root() -> Any:
 def users() -> Any:
     return {
         "message": "heelo , i am user route ",
-        users: [{id: 1, "name": "zain"}, {id: 2, "name": "khan"}],
+        "users": '[{id: 1, "name": "zain"}, {id: 2, "name": "khan"}]',
     }
 
 
