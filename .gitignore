@@ -1,0 +1,26 @@
+# Virtual Environment
+venv/
+.venv/
+env/
+ENV/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Environment variables
+.env
+.env.*
+
+# VS Code
+.vscode/
+
+# Logs and downloads
+logs/
+youtube_downloads/
+youtube_tags/
+
+# Pyright / Type checkers
+pyrightconfig.json
