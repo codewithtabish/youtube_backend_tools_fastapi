@@ -25,4 +25,12 @@ def root() -> Any:
     return {"message": "heelo , i am home route "}
 
 
+@app.get("/users")
+def users() -> Any:
+    return {
+        "message": "heelo , i am user route ",
+        users: [{id: 1, "name": "zain"}, {id: 2, "name": "khan"}],
+    }
+
+
 app.include_router(youtube_router)
