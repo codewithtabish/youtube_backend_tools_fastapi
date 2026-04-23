@@ -19,6 +19,7 @@ class YouTubeService:
             "no_warnings": True,
             "extractor_args": {
                 "youtube": {
+                    # 🔥 These player clients return full tags reliably
                     "player_client": [
                         "web_safari",
                         "ios",
@@ -33,7 +34,6 @@ class YouTubeService:
                 "Accept-Language": "en-US,en;q=0.9",
             },
             "cookies": YouTubeService.COOKIES_PATH,
-            # Extra options to handle "unavailable" videos better
             "allow_unplayable_formats": True,
             "ignore_no_formats_error": True,
         }
