@@ -1,5 +1,4 @@
 from typing import Any, Optional
-import random
 import yt_dlp
 from fastapi import HTTPException
 
@@ -11,35 +10,9 @@ class YouTubeService:
 
     COOKIES_PATH: Optional[str] = "cookies.txt"
 
-    # 🔥 Proxies turned ON (this fixes the blocking on EC2)
-    PROXIES = [
-        "http://zovtbsev:qadh4cbyql1g@31.59.20.176:6754",
-        "http://zovtbsev:qadh4cbyql1g@198.23.239.134:6540",
-        "http://zovtbsev:qadh4cbyql1g@45.38.107.97:6014",
-        "http://zovtbsev:qadh4cbyql1g@107.172.163.27:6543",
-        "http://zovtbsev:qadh4cbyql1g@198.105.121.200:6462",
-        "http://zovtbsev:qadh4cbyql1g@216.10.27.159:6837",
-        "http://zovtbsev:qadh4cbyql1g@142.111.67.146:5611",
-        "http://zovtbsev:qadh4cbyql1g@191.96.254.138:6185",
-        "http://zovtbsev:qadh4cbyql1g@31.58.9.4:6077",
-        "http://zovtbsev:qadh4cbyql1g@104.239.107.47:5699",
-    ]
-
-    PAID_PROXY: Optional[str] = None
-
-    @staticmethod
-    def _get_proxy() -> Optional[str]:
-        if YouTubeService.PAID_PROXY:
-            return YouTubeService.PAID_PROXY
-        if YouTubeService.PROXIES:
-            return random.choice(YouTubeService.PROXIES)
-        return None
-
     @staticmethod
     async def get_youtube_tags(request: YouTubeTagsRequest) -> YouTubeTagsResponse:
         url = request.url.strip()
-
-        proxy = YouTubeService._get_proxy()
 
         ydl_opts = {
             "quiet": True,
@@ -60,10 +33,10 @@ class YouTubeService:
                 "Accept-Language": "en-US,en;q=0.9",
             },
             "cookies": YouTubeService.COOKIES_PATH,
+            # Extra options to handle "unavailable" videos better
+            "allow_unplayable_formats": True,
+            "ignore_no_formats_error": True,
         }
-
-        if proxy:
-            ydl_opts["proxy"] = proxy
 
         try:
             with yt_dlp.YoutubeDL(ydl_opts) as ydl:  # type:ignore
