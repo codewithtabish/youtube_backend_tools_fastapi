@@ -1,4 +1,5 @@
 from typing import Any, Optional
+import random
 import yt_dlp
 from fastapi import HTTPException
 
@@ -6,36 +7,50 @@ from models import YouTubeTagsRequest, YouTubeTagsResponse
 
 
 class YouTubeService:
-    """Service layer for YouTube related operations"""
+    """Service layer for all YouTube related operations"""
 
+    # 🔥 COOKIES (very important for good results)
     COOKIES_PATH: Optional[str] = "cookies.txt"
+
+    # 🔥 YOUR DECODO FREE TRIAL PROXY
+    DECODO_USERNAME = "sprf868gvw"
+    DECODO_PASSWORD = "hdtm8~oj9eqiSB9F5O"
+    DECODO_PORTS = list(range(10001, 10011))  # 10001 to 10010
+
+    @staticmethod
+    def _get_proxy() -> str:
+        """Return random Decodo proxy each time"""
+        port = random.choice(YouTubeService.DECODO_PORTS)
+        return (
+            f"http://{YouTubeService.DECODO_USERNAME}:"
+            f"{YouTubeService.DECODO_PASSWORD}@"
+            f"gate.decodo.com:{port}"
+        )
 
     @staticmethod
     async def get_youtube_tags(request: YouTubeTagsRequest) -> YouTubeTagsResponse:
+        """
+        Extract title and tags from a YouTube video.
+        """
         url = request.url.strip()
 
+        # yt-dlp configuration with proxy + cookies
         ydl_opts = {
             "quiet": True,
             "no_warnings": True,
-            "extractor_args": {
-                "youtube": {
-                    # 🔥 These player clients return full tags reliably
-                    "player_client": [
-                        "web_safari",
-                        "ios",
-                        "android",
-                        "web",
-                        "web_creator",
-                    ],
-                }
-            },
-            "http_headers": {
-                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36",
-                "Accept-Language": "en-US,en;q=0.9",
-            },
-            "cookies": YouTubeService.COOKIES_PATH,
-            "allow_unplayable_formats": True,
-            "ignore_no_formats_error": True,
+            # "extractor_args": {
+            #     "youtube": {
+            #         "player_client": [
+            #             "web_safari",
+            #             "ios",
+            #             "android",
+            #             "web",
+            #             "web_creator",
+            #         ],
+            #     }
+            # },
+            # "cookies": YouTubeService.COOKIES_PATH,
+            "proxy": YouTubeService._get_proxy(),  # ← Proxy added here
         }
 
         try:
