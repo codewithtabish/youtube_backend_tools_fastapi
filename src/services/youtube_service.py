@@ -9,7 +9,7 @@ from models import YouTubeTagsRequest, YouTubeTagsResponse
 class YouTubeService:
     """Service layer for all YouTube related operations"""
 
-    # 🔥 COOKIES (very important for good results)
+    # 🔥 COOKIES (kept as you wanted - file is in root folder)
     COOKIES_PATH: Optional[str] = "cookies.txt"
 
     # 🔥 YOUR DECODO FREE TRIAL PROXY
@@ -38,26 +38,28 @@ class YouTubeService:
         ydl_opts = {
             "quiet": True,
             "no_warnings": True,
-            # "extractor_args": {
-            #     "youtube": {
-            #         "player_client": [
-            #             "web_safari",
-            #             "ios",
-            #             "android",
-            #             "web",
-            #             "web_creator",
-            #         ],
-            #     }
-            # },
-            # "cookies": YouTubeService.COOKIES_PATH,
-            "proxy": YouTubeService._get_proxy(),  # ← Proxy added here
+            "extractor_args": {
+                "youtube": {
+                    "player_client": [
+                        "web_safari",
+                        "ios",
+                        "android",
+                        "web",
+                        "web_creator",
+                    ],
+                }
+            },
+            "http_headers": {
+                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+                "Accept-Language": "en-US,en;q=0.9",
+            },
+            "cookies": YouTubeService.COOKIES_PATH,  # ← Cookies enabled
+            "proxy": YouTubeService._get_proxy(),  # ← Proxy enabled
         }
 
         try:
-            with yt_dlp.YoutubeDL(ydl_opts) as ydl:  # type:ignore
-                info: dict[str, Any] = ydl.extract_info(
-                    url, download=False
-                )  # type:ignore
+            with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+                info: dict[str, Any] = ydl.extract_info(url, download=False)
 
                 title: str = info.get("title", "Untitled Video")
                 tags: list[str] = info.get("tags", [])
